@@ -5,7 +5,7 @@
 <style>
 body {
   margin: 0;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 #navbar {
@@ -20,7 +20,7 @@ body {
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-size: 10px;
+  font-size: 15px;
 }
 
 #navbar a:hover {
@@ -48,7 +48,7 @@ body {
 }
 
 #title{
-    padding: 50px 20px 50px 20px;
+    padding: 80px 20px 80px 20px;
     margin: 1px;
     background-color: gray;
     text-align: center;
@@ -66,7 +66,7 @@ body {
 <body>
 
 <div id="navbar">
-  <a class="active" href="javascript:void(0)">Home</a>
+  <a id ="home" class="active" href="javascript:void(0)"><a href="home">Home</a></a>
   <a href="javascript:void(0)">Introduction</a>
   <a href="javascript:void(0)">Proposed Approach</a>
   <a href="javascript:void(0)">Result</a>
@@ -89,11 +89,106 @@ body {
    </div> <!--Introduction close div -->
    
    <div id = "approach">
+      <h2>Proposed Approach</h2>
+      <h4> Voice Activity Detection</h4>
+      <p>This is the pre-filter applied for all signals. There are two methods:</p>
+<p>1.Energy Based Method: Filters out intervals with relatively low energy but is sensitive to noise.</p>
+<p>2.Long-Term Spectral Divergence: Compare long term spectral envelope with noise spectrum. This is more Robust to noise.</p> 
+      
+      <h4> Speech Spectogram</h4>
+      <p>It is well known that the speech signal is non-stationary
+	in nature. However, it is assumed that the speech signal
+remains stationary over a short duration of 20–30 ms. Hence, the
+pre-emphasized signal is segmented into M frames of 20 ms
+duration with a 10 ms overlap between two consecutive frames to
+retain a good quality of the signal and to avoid loss of information</p>
+      <p>Windowing is carried out to reduce the edge effects at the
+beginning and the end of the frame. In our study Hamming
+window is multiplied with each frame</p>
+      <img src="img/hammingwindow.jpg">
+      <p>Fourier transform of each frame is computed to produce an
+estimate of the short-term frequency content of the signal, called
+as spectrogram. The spectrogram is the squared magnitude of the
+time-dependent Fourier transform versus time. N length DFT of a
+windowed frame is computed to obtain the power spectrum as
+below</p>
+      <img src= "img/Powespectrum.jpg">
+      <p>where Xi(k) is the kth component of DFT of xi(n) (windowed
+frame). Re {.} and Im {.} indicate real and imaginary parts,
+respectively. The spectrums of these frames f(i,k) are concatenated
+to construct the speech spectrogram </p>
+      <img src="img/Spectogram.jpg">
+      <p>In the proposed approach, the speech spectrogram is treated as
+an image. Contextual variations in speech images are similar to
+real-world changes in scene analysis. These variations can be
+captured by applying image processing techniques to these
+patterns.</p>
+      <h4> Radon Transform </h4>
+      <p> Radon transform is based on the parameterization of lines and the evaluation of integrals of an image along these lines. Due to inherent properties of Radon transform, it is a useful tool to
+capture the directional features of an image. Basically, the Radon
+transform adds up the pixel intensity values in the given image
+(spectrogram) or time frequency distribution along a straight line
+in a particular direction at a specific displacement</p>
+      <img src="img/Radon.png">
+      <p> The spectrogram represents acoustic features like energy,
+pitch, fundamental frequency, formants and time in the form of
+a pattern.The Radon transform effectively captures
+these features in the pattern by projecting it onto different
+orientation slices.</p>
+      <p>The Radon projection is obtained by summing
+all the intensity values of those pixels that are within the circle
+surrounding the pattern to be recognized and on the line that is
+perpendicular to the ridge. For a given ridge, every pixel within
+the circle will be projected onto it along the perpendicular direction. This gives a rise to one Radon slice in the Radon
+domain. The proposed technique computes Radon projections of
+the spectrogram in different orientations</p>
+      <p>edundant
+information by the increased number of Radon projections. Hence in
+the subsequent experiments only seven Radon projections have been
+used [22.5, 45, 67.5, 90, 112.5, 135, 157.5].</p>
+      <h4> Discrete Cosine Transform</h4>
+      <p>DCT is a well-known signal analysis tool used in data compression due to its compact representation capability. It has an
+excellent energy compaction property for highly correlated data.
+This helps in reduction of the feature vector dimension.</p>
+      <img src="img/DCT.jpg">
+      <p> There is a significant improvement in the recognition rate as the
+use of DCT coefficients increases up to 30%. Any further increase
+in the coefficients does not improve the performance significantly. Hence we have selected 30% coefficients of DCT as
+significant coefficients in all the recognition. This happens because most of the information lies in the lower spectrum. </p>
+      
+      
+
+      
    
    </div> <!--Proposed approach close div-->
    
    
    <div id = "result">
+      <h4> <strong>Dataset Description </strong> </h4>
+      <p> As we did not find any good dataset we created our own dataset from youtube videos.</p>
+      <a href="https://drive.google.com/drive/folders/1yLMBpAata_gxS95SO6o5jFHXOZ43Iq8M">Link for the dataset</a>
+      <h4> <strong> Code</strong></h4>
+      <a href="https://github.com/rahulkmr75/speech_segmentation">Link for the code</a>
+      <p><h4> <strong>Discussion</strong></h4></p>
+      <p><strong>Why Spectogram?</strong></p>
+      <p> 1. In speaker identification system, high dimension feature set is preferred to enhance the performance. However, increased feature dimension requires more computational time and storage space. The classifier using high dimension feature set also requires more parameters to characterize a speaker model, e.g. Gaussian Mixture Model (GMM). This increases computational complexity, making real-time implementation more difficult. Furthermore, a large amount of data is required for the training.</p>
+      <p>2.An alternative approach to this is to extract effective and efficient feature vectors.Mel frequency cepstral coefficients (MFCC) and linear prediction cepstral coefficients (LPCC) are the two most common feature extraction techniques in speaker identification. MFCC is generally used because of its robustness in speaker identification. Since the elements of feature vectors are generally correlated, a large number of mixtures with full covariance matrix are necessary to provide good approximation. </p>
+      <p>3.The GMM with diagonal covariance matrix is used for both speaker identification and verification because of its computational simplicity.</p>
+      <p>4.Contextual variations in speech are better represented using a spectrogram and hence it is widely used as a tool for speech analysis</p>
+      <p>5.A spectrogram is a graphical display of the squared magnitude of the time-varying spectral characteristics of speech. It is compact and efficient in representation carrying information about energy, pitch, fundamental frequency,formants and timing. Spectrogram reading techniques have revealed that a speech spectrogram contains rich acoustic features that could be valuable in an automatic speech and speaker recognition system</p> 
+      <p>6.The technique we use here formulates the speaker identification problem into pattern recognition of images and resolving it using machine learning tools. The technique uses Radon Projections of speech spectogram in different angles to derieve the speaker's voice pattern. And to get more efficient and effective speaker features we use DCT (Dicrete Cosine Transform). As our dataset was small enough we did not use the DCT in our project.</p>
+      <strong>Why Radon Transform?</strong>
+      <p>1. Radon transform is based on the parameterization of lines and the evaluation of integrals of an image along these lines. Due to inherent properties of Radon transform, it is a useful tool to capture the directional features of an image.</p>
+      <p> 2. Basically, the Radon transform adds up the pixel intensity values in the given image (spectrogram) or time frequency distribution along a straight line in a particular direction at a specific displacement.</p>
+      <p>3. The spectrogram represents acoustic features like energy, pitch, fundamental frequency, formants and time in the form of a pattern.The Radon transform effectively captures these features in the pattern by projecting it onto different orientation slices.</p>
+      <p>4.The Radon projection is obtained by summing all the intensity values of those pixels that are within the circle surrounding the pattern to be recognized and on the line that is perpendicular to the ridge.Another advantage of using Radon transform in the proposed approach is its insensitivity to additive noise.</p>
+      <img src="/img/Radon Transform.png">
+      <strong>Why Discrete Cosine Transform? </strong>
+      <p>1. DCT is an orthogonal transformation that is very widely used in image compression and is widely accepted in the multimedia standards. DCT belongs to a family of 16 trigonometric transformations</p>
+      <p>2.DCT is used in signal and image processing as it has a strong "energy compaction" property for highly correlated data.</p>
+      <p>3. Can use FFT like algorithms to compute them in O(nlogn) time.</p>
+      
+
    
    </div> <!--Result close div-->
    
